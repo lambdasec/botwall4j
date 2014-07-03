@@ -42,6 +42,12 @@ import org.jsoup.select.Elements;
  */
 public class ResponseHardening implements Filter {
   
+  ///////////////////////////// Class Attributes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  
+  ////////////////////////////// Class Methods \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  
+  //////////////////////////////// Attributes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  
   protected FilterConfig config;
   
   protected SecretKey key;
@@ -49,7 +55,15 @@ public class ResponseHardening implements Filter {
   protected Map<String,String> keyStore;
   
   protected Map<String,IvParameterSpec> encryptedStore;
-
+    
+  /////////////////////////////// Constructors \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  
+  
+  ////////////////////////////////// Methods \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  
+  //------------------------ Implements:
+  
+  //------------------------ Overrides: init, doFilter and destroy
+  
   @Override
   public void init(FilterConfig fc) throws ServletException {
     this.config = fc;
@@ -119,8 +133,12 @@ public class ResponseHardening implements Filter {
   
   @Override
   public void destroy() {
-
+    // do clean up here
   }
+  
+  //---------------------------- Abstract Methods -----------------------------
+  
+  //---------------------------- Utility Methods ------------------------------
   
   private String encrypt(String str, IvParameterSpec ivspec) {
     try {
@@ -150,24 +168,7 @@ public class ResponseHardening implements Filter {
       Logger.getLogger(ResponseHardening.class.getName()).log(Level.SEVERE, null, ex);
     }
     return null;
-  }
-  ///////////////////////////// Class Attributes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
-  ////////////////////////////// Class Methods \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
-  //////////////////////////////// Attributes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    
-  /////////////////////////////// Constructors \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  
-  
-  ////////////////////////////////// Methods \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
-  //------------------------ Implements:
-  
-  //------------------------ Overrides:
-  
-  //---------------------------- Abstract Methods -----------------------------
-  
-  //---------------------------- Utility Methods ------------------------------
+  } 
   
   //---------------------------- Property Methods -----------------------------     
 

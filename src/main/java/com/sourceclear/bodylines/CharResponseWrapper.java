@@ -16,6 +16,11 @@ import javax.servlet.http.HttpServletResponseWrapper;
  */
 class CharResponseWrapper extends HttpServletResponseWrapper {
 
+  ///////////////////////////// Class Attributes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  
+  ////////////////////////////// Class Methods \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  
+  //////////////////////////////// Attributes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   
   protected CharArrayWriter charWriter;
 
@@ -23,12 +28,20 @@ class CharResponseWrapper extends HttpServletResponseWrapper {
 
   protected boolean getOutputStreamCalled;
 
-  protected boolean getWriterCalled;
-
+  protected boolean getWriterCalled;    
+  
+  /////////////////////////////// Constructors \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  
+  
   public CharResponseWrapper(HttpServletResponse response) {
     super(response);
     charWriter = new CharArrayWriter();
-  }
+  } 
+  
+  ////////////////////////////////// Methods \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  
+  //------------------------ Implements:
+  
+  //------------------------ Overrides: getOutputStream, getWriter and toString
 
   @Override
   public ServletOutputStream getOutputStream() throws IOException {
@@ -62,4 +75,11 @@ class CharResponseWrapper extends HttpServletResponseWrapper {
     }
     return s;
   }
+  
+  //---------------------------- Abstract Methods -----------------------------
+  
+  //---------------------------- Utility Methods ------------------------------
+  
+  //---------------------------- Property Methods -----------------------------     
+
 }

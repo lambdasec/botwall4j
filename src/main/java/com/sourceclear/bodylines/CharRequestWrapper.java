@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
@@ -39,7 +38,13 @@ import org.apache.commons.codec.binary.Hex;
  *
  */
 public class CharRequestWrapper extends HttpServletRequestWrapper {
-
+  
+  ///////////////////////////// Class Attributes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  
+  ////////////////////////////// Class Methods \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  
+  //////////////////////////////// Attributes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  
   protected String newRequestBody;
   
   protected BufferedReader modifiedReader;
@@ -48,8 +53,10 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
 
   protected boolean getReaderCalled;
   
-  protected Map<String,String> keyStore;
-
+  protected Map<String,String> keyStore;   
+  
+  /////////////////////////////// Constructors \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  
+  
   public CharRequestWrapper(HttpServletRequest request, SecretKey key, Map<String,String> keyStore,
           Map<String,IvParameterSpec> encryptedStore) {
     super(request);
@@ -91,8 +98,15 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
     }
     else newRequestBody=originalRequestBody;
     this.keyStore = keyStore;
-  }
-
+  }  
+  
+  ////////////////////////////////// Methods \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  
+  //------------------------ Implements:
+  
+  //------------------------ Overrides: getInputStream, getReader, getParameter,
+  //------------------------            getParameterNames, getParameterValues and getParameterMap
+  
   @Override
   public ServletInputStream getInputStream() throws IOException {
     if (getReaderCalled) {
@@ -173,7 +187,11 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
       retMap.put(s, values.toArray(new String[values.size()]));
     }
     return retMap;
-  }
+  }  
+  
+  //---------------------------- Abstract Methods -----------------------------
+  
+  //---------------------------- Utility Methods ------------------------------
   
   private Map<String, List<String>> getQueryMap(String query)  
   {  
@@ -223,4 +241,7 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
     }
     return null;
   }
+  
+  //---------------------------- Property Methods ----------------------------- 
+  
 }
