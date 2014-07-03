@@ -1,0 +1,11 @@
+bin/
+.classpath
+.settings
+.project
+target
+.DS_Store
+dependency-reduced-pom.xml
+*.jar
+*.sig
+*.apk
+.class
