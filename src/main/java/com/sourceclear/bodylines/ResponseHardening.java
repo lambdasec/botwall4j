@@ -67,8 +67,6 @@ public class ResponseHardening implements Filter {
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain fc) 
           throws IOException, ServletException {
-    ServletResponse newResponse = response;
-    ServletRequest newRequest = request;
     SecretKey key;
     Map<String,String> keyStore;
     Map<String,IvParameterSpec> encryptedStore;
@@ -93,8 +91,8 @@ public class ResponseHardening implements Filter {
           keyStore = new HashMap<>();
           encryptedStore = new HashMap<>();  
         }
-        newRequest = new CharRequestWrapper((HttpServletRequest) request, key, keyStore, encryptedStore);
-        newResponse = new CharResponseWrapper((HttpServletResponse) response);
+        ServletRequest newRequest = new CharRequestWrapper((HttpServletRequest) request, key, keyStore, encryptedStore);
+        ServletResponse newResponse = new CharResponseWrapper((HttpServletResponse) response);
 
         fc.doFilter(newRequest, newResponse);
 
