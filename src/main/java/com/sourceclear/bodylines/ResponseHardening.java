@@ -100,6 +100,7 @@ public class ResponseHardening implements Filter {
         Document doc = Jsoup.parseBodyFragment(html);
         harden(doc, "input[name]", "name", ivspec);
         harden(doc, "input[id]", "id", ivspec);
+        harden(doc, "form[id]", "id", ivspec);
         response.getWriter().write(doc.html());
       }
     }
