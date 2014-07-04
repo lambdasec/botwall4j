@@ -30,6 +30,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.jsoup.Jsoup;
@@ -49,12 +50,6 @@ public class ResponseHardening implements Filter {
   //////////////////////////////// Attributes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   
   protected FilterConfig config;
-  
-  protected SecretKey key;
-  
-  protected Map<String,String> keyStore;
-  
-  protected Map<String,IvParameterSpec> encryptedStore;
     
   /////////////////////////////// Constructors \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  
   
@@ -66,14 +61,7 @@ public class ResponseHardening implements Filter {
   
   @Override
   public void init(FilterConfig fc) throws ServletException {
-    this.config = fc;
-    try {
-      this.key = KeyGenerator.getInstance("AES").generateKey();
-    } catch (NoSuchAlgorithmException ex) {
-      Logger.getLogger(ResponseHardening.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    this.keyStore = new HashMap<>();
-    this.encryptedStore = new HashMap<>();
+    this.config = fc;   
   }
 
   @Override
@@ -81,28 +69,65 @@ public class ResponseHardening implements Filter {
           throws IOException, ServletException {
     ServletResponse newResponse = response;
     ServletRequest newRequest = request;
+    SecretKey key;
+    Map<String,String> keyStore;
+    Map<String,IvParameterSpec> encryptedStore;
+    
     SecureRandom random = new SecureRandom();
     byte iv[] = new byte[16];//generate random 16 byte IV AES is always 16bytes
     random.nextBytes(iv);
     IvParameterSpec ivspec = new IvParameterSpec(iv);
     
-    if (request instanceof HttpServletRequest) {
-      newRequest = new CharRequestWrapper((HttpServletRequest) request, this.key, keyStore, encryptedStore);
-      newResponse = new CharResponseWrapper((HttpServletResponse) response);
-    }
-    
-    fc.doFilter(newRequest, newResponse);
+    try {
+      if (request instanceof HttpServletRequest) {
+        HttpSession st = ((HttpServletRequest) request).getSession();
+        key = (SecretKey) st.getAttribute("key");
+        keyStore = (Map<String, String>) st.getAttribute("keyStore");
+        encryptedStore = (Map<String, IvParameterSpec>) st.getAttribute("encryptedStore");
+        if(key == null) {
+          try {
+            key = KeyGenerator.getInstance("AES").generateKey();
+            } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(ResponseHardening.class.getName()).log(Level.SEVERE, null, ex);
+          }
+          keyStore = new HashMap<>();
+          encryptedStore = new HashMap<>();  
+        }
+        newRequest = new CharRequestWrapper((HttpServletRequest) request, key, keyStore, encryptedStore);
+        newResponse = new CharResponseWrapper((HttpServletResponse) response);
 
-    if (newResponse instanceof CharResponseWrapper) {
-      String html = newResponse.toString();
-      
-      if (html != null) {
-        Document doc = Jsoup.parseBodyFragment(html);
-        harden(doc, "input[name]", "name", ivspec);
-        harden(doc, "input[id]", "id", ivspec);
-        harden(doc, "form[id]", "id", ivspec);
-        response.getWriter().write(doc.html());
+        fc.doFilter(newRequest, newResponse);
+
+        if (newResponse instanceof CharResponseWrapper) {
+          String html = newResponse.toString();
+
+          if (html != null) {
+            Document doc = Jsoup.parseBodyFragment(html);
+            harden(doc, "input[name]", "name", ivspec, keyStore, encryptedStore, key);
+            harden(doc, "input[id]", "id", ivspec, keyStore, encryptedStore, key);
+            harden(doc, "form[id]", "id", ivspec, keyStore, encryptedStore, key);
+            response.getWriter().write(doc.html());
+          }
+        }
+        st.setAttribute("key", key);
+        st.setAttribute("keyStore", keyStore);
+        st.setAttribute("encryptedStore", encryptedStore);
       }
+    }
+    catch (ServletException se) {
+      if(response instanceof HttpServletResponse) {
+        String str = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n" +
+                    "<html><head>\n" +
+                    "<title>403 Forbidden</title>\n" +
+                    "</head><body>\n" +
+                    "<h1>Forbidden</h1>\n" +
+                    "<hr>\n" +
+                    "<address>Response Hardening by SourceClear Bodylines</address>\n" +
+                    "</body></html>";
+        response.getWriter().write(str);
+        ((HttpServletResponse) response).setStatus(403);
+      }
+      else Logger.getLogger(ResponseHardening.class.getName()).log(Level.SEVERE, null, se);
     }
   }
   
@@ -115,12 +140,13 @@ public class ResponseHardening implements Filter {
   
   //---------------------------- Utility Methods ------------------------------
   
-  private void harden(Document doc, String selector, String attribute, IvParameterSpec ivspec) {
+  private void harden(Document doc, String selector, String attribute, IvParameterSpec ivspec, Map<String, String> keyStore,
+          Map<String, IvParameterSpec> encryptedStore, SecretKey key) {
     Elements names = doc.select(selector);
     for (Element ele : names) {
       String name = ele.attr(attribute);
       if(encryptedStore.containsKey(name)) {
-        String origName = decrypt(name, encryptedStore.get(name));
+        String origName = decrypt(name, encryptedStore.get(name), key);
         encryptedStore.remove(name);
         name = origName;
       }
@@ -138,7 +164,7 @@ public class ResponseHardening implements Filter {
           keyStore.put(s,name);
           break;
         case "encryption":
-          s = encrypt(name, ivspec);
+          s = encrypt(name, ivspec, key);
           ele.attr(attribute,s);
           encryptedStore.put(s,ivspec);
           break;
@@ -146,10 +172,10 @@ public class ResponseHardening implements Filter {
     }
   }
   
-  private String encrypt(String str, IvParameterSpec ivspec) {
+  private String encrypt(String str, IvParameterSpec ivspec, SecretKey key) {
     try {
       Cipher ecipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-      ecipher.init(Cipher.ENCRYPT_MODE, this.key, ivspec);
+      ecipher.init(Cipher.ENCRYPT_MODE, key, ivspec);
       byte[] utf8 = str.getBytes("UTF8");
       byte[] enc = ecipher.doFinal(utf8);
       return Hex.encodeHexString(enc);
@@ -161,10 +187,10 @@ public class ResponseHardening implements Filter {
     return null;
   }
   
-  private String decrypt(String str, IvParameterSpec ivspec) {
+  private String decrypt(String str, IvParameterSpec ivspec, SecretKey key) {
     try {
       Cipher dcipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-      dcipher.init(Cipher.DECRYPT_MODE, this.key, ivspec) ;
+      dcipher.init(Cipher.DECRYPT_MODE, key, ivspec) ;
       byte[] dec = Hex.decodeHex(str.toCharArray());
       byte[] utf8 = dcipher.doFinal(dec);
       return new String(utf8,"UTF8");

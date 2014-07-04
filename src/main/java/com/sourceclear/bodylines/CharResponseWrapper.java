@@ -41,7 +41,7 @@ class CharResponseWrapper extends HttpServletResponseWrapper {
   
   //------------------------ Implements:
   
-  //------------------------ Overrides: getOutputStream, getWriter and toString
+  //------------------------ Overrides: getOutputStream, getWriter, setStatus and toString
 
   @Override
   public ServletOutputStream getOutputStream() throws IOException {
@@ -66,6 +66,11 @@ class CharResponseWrapper extends HttpServletResponseWrapper {
     return writer;
   }
 
+  @Override
+  public void setStatus(int sc) {
+    super.setStatus(sc); 
+  }
+  
   @Override
   public String toString() {
     String s = null;

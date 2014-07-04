@@ -28,6 +28,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -58,7 +59,7 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
   /////////////////////////////// Constructors \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  
   
   public CharRequestWrapper(HttpServletRequest request, SecretKey key, Map<String,String> keyStore,
-          Map<String,IvParameterSpec> encryptedStore) {
+          Map<String,IvParameterSpec> encryptedStore) throws ServletException {
     super(request);
     StringBuilder sb = new StringBuilder();
     try {
@@ -90,13 +91,20 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
             String plainTxt = decrypt(s,key,encryptedStore.get(s));
             newSb.append(plainTxt).append("=").append(param);
           }
-          else newSb.append(s).append("=").append(param);
+          else {
+            if(keyStore.isEmpty() && encryptedStore.isEmpty())
+              newSb.append(s).append("=").append(param);
+            else {
+              request.getSession().invalidate();
+              throw new ServletException();
+            }
+          }
           newSb.append("&");
         }
       }
       newRequestBody = newSb.toString();
     }
-    else newRequestBody=originalRequestBody;
+    else newRequestBody = originalRequestBody;
     this.keyStore = keyStore;
   }  
   
