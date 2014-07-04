@@ -98,34 +98,8 @@ public class ResponseHardening implements Filter {
       
       if (html != null) {
         Document doc = Jsoup.parseBodyFragment(html);
-        Elements names = doc.select("input[name]");
-        for (Element ele : names) {
-          String name = ele.attr("name");
-          if(encryptedStore.containsKey(name)) {
-            String origName = decrypt(name, encryptedStore.get(name));
-            encryptedStore.remove(name);
-            name = origName;
-          }
-          if(keyStore.containsKey(name)) {
-            String origName = keyStore.get(name);
-            keyStore.remove(name);
-            name = origName;
-          }
-          String s;
-          if(null != config.getInitParameter("hardeningType")) 
-            switch (config.getInitParameter("hardeningType")) {
-            case "random":
-              s = UUID.randomUUID().toString();
-              ele.attr("name",s);
-              keyStore.put(s,name);
-              break;
-            case "encryption":
-              s = encrypt(name, ivspec);
-              ele.attr("name",s);
-              encryptedStore.put(s,ivspec);
-              break;
-          }
-        }
+        harden(doc, "input[name]", "name", ivspec);
+        harden(doc, "input[id]", "id", ivspec);
         response.getWriter().write(doc.html());
       }
     }
@@ -139,6 +113,37 @@ public class ResponseHardening implements Filter {
   //---------------------------- Abstract Methods -----------------------------
   
   //---------------------------- Utility Methods ------------------------------
+  
+  private void harden(Document doc, String selector, String attribute, IvParameterSpec ivspec) {
+    Elements names = doc.select(selector);
+    for (Element ele : names) {
+      String name = ele.attr(attribute);
+      if(encryptedStore.containsKey(name)) {
+        String origName = decrypt(name, encryptedStore.get(name));
+        encryptedStore.remove(name);
+        name = origName;
+      }
+      if(keyStore.containsKey(name)) {
+        String origName = keyStore.get(name);
+        keyStore.remove(name);
+        name = origName;
+      }
+      String s;
+      if(null != config.getInitParameter("hardeningType")) 
+        switch (config.getInitParameter("hardeningType")) {
+        case "random":
+          s = UUID.randomUUID().toString();
+          ele.attr(attribute,s);
+          keyStore.put(s,name);
+          break;
+        case "encryption":
+          s = encrypt(name, ivspec);
+          ele.attr(attribute,s);
+          encryptedStore.put(s,ivspec);
+          break;
+      }
+    }
+  }
   
   private String encrypt(String str, IvParameterSpec ivspec) {
     try {

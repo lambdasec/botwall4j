@@ -86,7 +86,7 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
             String randomStr = keyStore.get(s);
             newSb.append(randomStr).append("=").append(param);
           }
-          if(encryptedStore.containsKey(s)) {
+          else if(encryptedStore.containsKey(s)) {
             String plainTxt = decrypt(s,key,encryptedStore.get(s));
             newSb.append(plainTxt).append("=").append(param);
           }
