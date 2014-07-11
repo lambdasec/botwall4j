@@ -27,21 +27,99 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
-    <build>
+    
+  <distributionManagement>
+    <snapshotRepository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>sourceclearSnapshots</id>
+      <name>SourceClear Snapshots</name>
+      <url>https://maven.sourceclear.io/content/repositories/sourceclear-snapshots/</url>
+      <layout>default</layout>
+    </snapshotRepository>
+    <repository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>sourceclearReleases</id>
+      <name>SourceClear Releases</name>
+      <url>https://maven.sourceclear.io/content/repositories/sourceclear-releases/</url>
+      <layout>default</layout>
+    </repository>        
+  </distributionManagement> 
+   
+  <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>2.0</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-          </execution>
-        </executions>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5</version>
+      </plugin>      
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.4</version>
+        <configuration> 
+          <descriptors>
+            <descriptor>src/main/resources/assembly.xml</descriptor>
+          </descriptors>
+        </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>   
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+        <configuration>
+          <stylesheetfile>${basedir}/src/main/resources/css/javadoc.css</stylesheetfile>
+        </configuration>
+      </plugin>      
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>fatjar</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>2.2</version>
+            <configuration>
+              <!-- put your configurations here -->
+            </configuration>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>shade</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>   
+        </plugins>
+      </build>
+    </profile>        
+  </profiles>
+  
+  <repositories>
+    <repository>
+      <id>sourceclearReleases</id>
+      <url>https://maven.sourceclear.io/content/repositories/sourceclear-releases/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>sourceclearSnapshots</id>
+      <url>https://maven.sourceclear.io/content/repositories/sourceclear-snapshots/</url>
+    </repository>
+  </repositories> 
 </project>
