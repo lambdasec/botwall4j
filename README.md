@@ -1,2 +1,2 @@
-# bodylines
-Hardening of HTTP Responses
+# Botwall4j
+A botwall for Java Web Applications
