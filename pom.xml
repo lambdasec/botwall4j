@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.sourceclear</groupId>
-    <artifactId>bodylines</artifactId>
+    <groupId>org.lambdasec</groupId>
+    <artifactId>botwall4j</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <dependencies>
@@ -27,23 +27,6 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
-    
-  <distributionManagement>
-    <snapshotRepository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>sourceclearSnapshots</id>
-      <name>SourceClear Snapshots</name>
-      <url>https://maven.sourceclear.io/content/repositories/sourceclear-snapshots/</url>
-      <layout>default</layout>
-    </snapshotRepository>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>sourceclearReleases</id>
-      <name>SourceClear Releases</name>
-      <url>https://maven.sourceclear.io/content/repositories/sourceclear-releases/</url>
-      <layout>default</layout>
-    </repository>        
-  </distributionManagement> 
    
   <build>
     <plugins>
@@ -105,21 +88,4 @@
       </build>
     </profile>        
   </profiles>
-  
-  <repositories>
-    <repository>
-      <id>sourceclearReleases</id>
-      <url>https://maven.sourceclear.io/content/repositories/sourceclear-releases/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>sourceclearSnapshots</id>
-      <url>https://maven.sourceclear.io/content/repositories/sourceclear-snapshots/</url>
-    </repository>
-  </repositories> 
 </project>

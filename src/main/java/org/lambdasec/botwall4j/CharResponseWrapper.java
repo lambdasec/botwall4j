@@ -2,7 +2,7 @@
  * © Copyright 2014 -  SourceClear Inc
  */
 
-package com.sourceclear.bodylines;
+package org.lambdasec.botwall4j;
 
 import java.io.CharArrayWriter;
 import java.io.IOException;
