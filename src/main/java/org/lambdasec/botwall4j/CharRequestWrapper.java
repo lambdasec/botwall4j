@@ -7,9 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -19,18 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Hex;
 
 /**
  *
@@ -77,7 +68,7 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
             newSb.append(randomStr).append("=").append(param);
           }
           else if(encryptedStore.containsKey(s)) {
-            String plainTxt = decrypt(s,key,encryptedStore.get(s));
+            String plainTxt = Util.decrypt(s,encryptedStore.get(s),key);
             newSb.append(plainTxt).append("=").append(param);
           }
           else {
@@ -211,21 +202,6 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
       }  
      }
      return map;  
-  }
-  
-  private String decrypt(String str, SecretKey key, IvParameterSpec ivspec) {
-    try {
-      Cipher dcipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-      dcipher.init(Cipher.DECRYPT_MODE, key, ivspec) ;
-      byte[] dec = Hex.decodeHex(str.toCharArray());
-      byte[] utf8 = dcipher.doFinal(dec);
-      return new String(utf8,"UTF8");
-    } catch (IllegalBlockSizeException | BadPaddingException | UnsupportedEncodingException |
-            DecoderException | InvalidKeyException | InvalidAlgorithmParameterException |
-            NoSuchAlgorithmException | NoSuchPaddingException ex) {
-      Logger.getLogger(ResponseHardening.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return null;
   }
 
 }

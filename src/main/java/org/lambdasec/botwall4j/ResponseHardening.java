@@ -123,7 +123,7 @@ public class ResponseHardening implements Filter {
     for (Element ele : names) {
       String name = ele.attr(attribute);
       if(encryptedStore.containsKey(name)) {
-        String origName = decrypt(name, encryptedStore.get(name), key);
+        String origName = Util.decrypt(name, encryptedStore.get(name), key);
         encryptedStore.remove(name);
         name = origName;
       }
@@ -141,42 +141,12 @@ public class ResponseHardening implements Filter {
           keyStore.put(s,name);
           break;
         case "encryption":
-          s = encrypt(name, ivspec, key);
+          s = Util.encrypt(name, ivspec, key);
           ele.attr(attribute,s);
           encryptedStore.put(s,ivspec);
           break;
       }
     }
   }
-  
-  private String encrypt(String str, IvParameterSpec ivspec, SecretKey key) {
-    try {
-      Cipher ecipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-      ecipher.init(Cipher.ENCRYPT_MODE, key, ivspec);
-      byte[] utf8 = str.getBytes("UTF8");
-      byte[] enc = ecipher.doFinal(utf8);
-      return Hex.encodeHexString(enc);
-    } catch (UnsupportedEncodingException | IllegalBlockSizeException | BadPaddingException | 
-            NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | 
-            InvalidAlgorithmParameterException ex) {
-      Logger.getLogger(ResponseHardening.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return null;
-  }
-  
-  private String decrypt(String str, IvParameterSpec ivspec, SecretKey key) {
-    try {
-      Cipher dcipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-      dcipher.init(Cipher.DECRYPT_MODE, key, ivspec) ;
-      byte[] dec = Hex.decodeHex(str.toCharArray());
-      byte[] utf8 = dcipher.doFinal(dec);
-      return new String(utf8,"UTF8");
-    } catch (IllegalBlockSizeException | BadPaddingException | UnsupportedEncodingException |
-            DecoderException | InvalidKeyException | InvalidAlgorithmParameterException |
-            NoSuchAlgorithmException | NoSuchPaddingException ex) {
-      Logger.getLogger(ResponseHardening.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return null;
-  } 
 
 }
