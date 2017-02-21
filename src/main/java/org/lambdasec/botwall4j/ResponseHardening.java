@@ -1,6 +1,3 @@
-/*
- * © Copyright 2014 -  SourceClear Inc
- */
 
 package org.lambdasec.botwall4j;
 
@@ -42,24 +39,10 @@ import org.jsoup.select.Elements;
  *
  */
 public class ResponseHardening implements Filter {
-  
-  ///////////////////////////// Class Attributes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
-  ////////////////////////////// Class Methods \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
-  //////////////////////////////// Attributes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
-  protected FilterConfig config;
+
+ protected FilterConfig config;
     
-  /////////////////////////////// Constructors \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  
-  
-  ////////////////////////////////// Methods \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
-  //------------------------ Implements:
-  
-  //------------------------ Overrides: init, doFilter and destroy
-  
-  @Override
+ @Override
   public void init(FilterConfig fc) throws ServletException {
     this.config = fc;   
   }
@@ -120,7 +103,7 @@ public class ResponseHardening implements Filter {
                     "</head><body>\n" +
                     "<h1>Forbidden</h1>\n" +
                     "<hr>\n" +
-                    "<address>Response Hardening by SourceClear Bodylines</address>\n" +
+                    "<address>Blocked by botwall4j</address>\n" +
                     "</body></html>";
         response.getWriter().write(str);
         ((HttpServletResponse) response).setStatus(403);
@@ -133,11 +116,7 @@ public class ResponseHardening implements Filter {
   public void destroy() {
     // do clean up here
   }
-  
-  //---------------------------- Abstract Methods -----------------------------
-  
-  //---------------------------- Utility Methods ------------------------------
-  
+
   private void harden(Document doc, String selector, String attribute, IvParameterSpec ivspec, Map<String, String> keyStore,
           Map<String, IvParameterSpec> encryptedStore, SecretKey key) {
     Elements names = doc.select(selector);
@@ -199,7 +178,5 @@ public class ResponseHardening implements Filter {
     }
     return null;
   } 
-  
-  //---------------------------- Property Methods -----------------------------     
 
 }

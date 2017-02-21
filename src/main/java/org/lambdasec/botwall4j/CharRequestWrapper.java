@@ -1,6 +1,3 @@
-/*
- * © Copyright 2014 -  SourceClear Inc
- */
 
 package org.lambdasec.botwall4j;
 
@@ -39,13 +36,7 @@ import org.apache.commons.codec.binary.Hex;
  *
  */
 public class CharRequestWrapper extends HttpServletRequestWrapper {
-  
-  ///////////////////////////// Class Attributes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
-  ////////////////////////////// Class Methods \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
-  //////////////////////////////// Attributes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
+
   protected String newRequestBody;
   
   protected BufferedReader modifiedReader;
@@ -55,9 +46,7 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
   protected boolean getReaderCalled;
   
   protected Map<String,String> keyStore;   
-  
-  /////////////////////////////// Constructors \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  
-  
+
   public CharRequestWrapper(HttpServletRequest request, SecretKey key, Map<String,String> keyStore,
           Map<String,IvParameterSpec> encryptedStore) throws ServletException {
     super(request);
@@ -107,14 +96,7 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
     else newRequestBody = originalRequestBody;
     this.keyStore = keyStore;
   }  
-  
-  ////////////////////////////////// Methods \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
-  //------------------------ Implements:
-  
-  //------------------------ Overrides: getInputStream, getReader, getParameter,
-  //------------------------            getParameterNames, getParameterValues and getParameterMap
-  
+
   @Override
   public ServletInputStream getInputStream() throws IOException {
     if (getReaderCalled) {
@@ -197,11 +179,7 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
     return retMap;
   }  
   
-  //---------------------------- Abstract Methods -----------------------------
-  
-  //---------------------------- Utility Methods ------------------------------
-  
-  private Map<String, List<String>> getQueryMap(String query)  
+  private Map<String, List<String>> getQueryMap(String query)
   {  
      String[] params = query.split("&");  
      Map<String, List<String>> map = new HashMap<>(); 
@@ -249,7 +227,5 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
     }
     return null;
   }
-  
-  //---------------------------- Property Methods ----------------------------- 
-  
+
 }

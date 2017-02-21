@@ -1,6 +1,3 @@
-/*
- * © Copyright 2014 -  SourceClear Inc
- */
 
 package org.lambdasec.botwall4j;
 
@@ -16,12 +13,6 @@ import javax.servlet.http.HttpServletResponseWrapper;
  */
 class CharResponseWrapper extends HttpServletResponseWrapper {
 
-  ///////////////////////////// Class Attributes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
-  ////////////////////////////// Class Methods \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
-  //////////////////////////////// Attributes \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
   protected CharArrayWriter charWriter;
 
   protected PrintWriter writer;
@@ -30,18 +21,10 @@ class CharResponseWrapper extends HttpServletResponseWrapper {
 
   protected boolean getWriterCalled;    
   
-  /////////////////////////////// Constructors \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  
-  
   public CharResponseWrapper(HttpServletResponse response) {
     super(response);
     charWriter = new CharArrayWriter();
   } 
-  
-  ////////////////////////////////// Methods \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  
-  //------------------------ Implements:
-  
-  //------------------------ Overrides: getOutputStream, getWriter, setStatus and toString
 
   @Override
   public ServletOutputStream getOutputStream() throws IOException {
@@ -80,11 +63,5 @@ class CharResponseWrapper extends HttpServletResponseWrapper {
     }
     return s;
   }
-  
-  //---------------------------- Abstract Methods -----------------------------
-  
-  //---------------------------- Utility Methods ------------------------------
-  
-  //---------------------------- Property Methods -----------------------------     
 
 }
