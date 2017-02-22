@@ -1,2 +1,2 @@
 # Botwall4j
-A botwall for Java Web Applications
+A botwall for Java web applications
