@@ -55,9 +55,9 @@ public class ResponseHardening implements Filter {
 
           if (html != null) {
             Document doc = Jsoup.parseBodyFragment(html);
-            harden(doc, "input[name]", "name", keyStore);
-            harden(doc, "input[id]", "id", keyStore);
-            harden(doc, "form[id]", "id", keyStore);
+            randomize(doc, "input[name]", "name", keyStore);
+            randomize(doc, "input[id]", "id", keyStore);
+            randomize(doc, "form[id]", "id", keyStore);
             response.getWriter().write(doc.html());
           }
         }
@@ -86,7 +86,7 @@ public class ResponseHardening implements Filter {
     // do clean up here
   }
 
-  private void harden(Document doc, String selector, String attribute, Map<String, String> keyStore) {
+  private void randomize(Document doc, String selector, String attribute, Map<String, String> keyStore) {
     Elements names = doc.select(selector);
     for (Element ele : names) {
       String name = ele.attr(attribute);
