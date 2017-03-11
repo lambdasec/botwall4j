@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -28,18 +26,15 @@ import javax.servlet.http.HttpServletRequestWrapper;
  */
 public class CharRequestWrapper extends HttpServletRequestWrapper {
 
-  protected String newRequestBody;
-  
-  protected BufferedReader modifiedReader;
-  
-  protected boolean getInputStreamCalled;
+  private String newRequestBody;
 
-  protected boolean getReaderCalled;
-  
-  protected Map<String,String> keyStore;   
+  private BufferedReader modifiedReader;
 
-  public CharRequestWrapper(HttpServletRequest request, SecretKey key, Map<String,String> keyStore,
-          Map<String,IvParameterSpec> encryptedStore) throws ServletException {
+  private boolean getInputStreamCalled;
+
+  private boolean getReaderCalled;
+
+  CharRequestWrapper(HttpServletRequest request, Map<String,String> keyStore) throws ServletException {
     super(request);
     StringBuilder sb = new StringBuilder();
     try {
@@ -67,17 +62,9 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
             String randomStr = keyStore.get(s);
             newSb.append(randomStr).append("=").append(param);
           }
-          else if(encryptedStore.containsKey(s)) {
-            String plainTxt = Util.decrypt(s,encryptedStore.get(s),key);
-            newSb.append(plainTxt).append("=").append(param);
-          }
           else {
-            if(keyStore.isEmpty() && encryptedStore.isEmpty())
-              newSb.append(s).append("=").append(param);
-            else {
-              request.getSession().invalidate();
-              throw new ServletException();
-            }
+            request.getSession().invalidate();
+            throw new ServletException();
           }
           newSb.append("&");
         }
@@ -85,7 +72,6 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
       newRequestBody = newSb.toString();
     }
     else newRequestBody = originalRequestBody;
-    this.keyStore = keyStore;
   }  
 
   @Override
@@ -95,32 +81,14 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
     }
 
     getInputStreamCalled = true;
-    final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(newRequestBody.getBytes());
-    ServletInputStream istream = new ServletInputStream() {
-      
+    final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(this.newRequestBody.getBytes());
+
+    return new ServletInputStream() {
       @Override
       public int read() throws IOException {
         return byteArrayInputStream.read();
       }
-    /*
-      @Override
-      public boolean isFinished() {
-        return (byteArrayInputStream.available() == 0);
-      }
-
-      @Override
-      public boolean isReady() {
-        return (byteArrayInputStream.available() > 0);
-      }
-
-      @Override
-      public void setReadListener(ReadListener rl) {
-        rl = null;
-      }
-    */
     };
-    
-    return istream;
   }
 
   @Override
