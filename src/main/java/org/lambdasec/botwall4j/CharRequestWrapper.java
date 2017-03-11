@@ -10,7 +10,6 @@ import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -55,9 +54,7 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
       Map<String, List<String>> paramMap = getQueryMap(originalRequestBody);
       StringBuilder newSb = new StringBuilder();
       for (String s : paramMap.keySet()) {
-        Iterator<String> itr = paramMap.get(s).iterator();
-        while(itr.hasNext()) {
-          String param = itr.next();
+        for (String param: paramMap.get(s)) {
           if(keyStore.containsKey(s)) {
             String randomStr = keyStore.get(s);
             newSb.append(randomStr).append("=").append(param);

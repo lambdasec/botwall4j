@@ -13,15 +13,15 @@ import javax.servlet.http.HttpServletResponseWrapper;
  */
 class CharResponseWrapper extends HttpServletResponseWrapper {
 
-  protected CharArrayWriter charWriter;
+  private CharArrayWriter charWriter;
 
-  protected PrintWriter writer;
+  private PrintWriter writer;
 
-  protected boolean getOutputStreamCalled;
+  private boolean getOutputStreamCalled;
 
-  protected boolean getWriterCalled;    
+  private boolean getWriterCalled;
   
-  public CharResponseWrapper(HttpServletResponse response) {
+  CharResponseWrapper(HttpServletResponse response) {
     super(response);
     charWriter = new CharArrayWriter();
   } 
