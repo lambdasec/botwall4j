@@ -4,6 +4,7 @@ package org.lambdasec.botwall4j;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Locale;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -53,6 +54,15 @@ class CharResponseWrapper extends HttpServletResponseWrapper {
   public void setStatus(int sc) {
     super.setStatus(sc); 
   }
+
+  @Override
+  public void setLocale(Locale loc) { super.setLocale(loc); }
+
+  @Override
+  public void setCharacterEncoding(String charset) { super.setCharacterEncoding(charset); }
+
+  @Override
+  public void setContentType(String type) { super.setContentType(type); }
   
   @Override
   public String toString() {

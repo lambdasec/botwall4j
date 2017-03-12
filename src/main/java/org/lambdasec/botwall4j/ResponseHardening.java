@@ -50,16 +50,14 @@ public class ResponseHardening implements Filter {
 
         fc.doFilter(newRequest, newResponse);
 
-        if (newResponse instanceof CharResponseWrapper) {
-          String html = newResponse.toString();
+        String html = newResponse.toString();
 
-          if (html != null) {
-            Document doc = Jsoup.parseBodyFragment(html);
-            randomize(doc, "input[name]", "name", keyStore);
-            randomize(doc, "input[id]", "id", keyStore);
-            randomize(doc, "form[id]", "id", keyStore);
-            response.getWriter().write(doc.html());
-          }
+        if (html != null) {
+          Document doc = Jsoup.parseBodyFragment(html);
+          randomize(doc, "input[name]", "name", keyStore);
+          randomize(doc, "input[id]", "id", keyStore);
+          randomize(doc, "form[id]", "id", keyStore);
+          response.getWriter().write(doc.html());
         }
         st.setAttribute("keyStore", keyStore);
       }
