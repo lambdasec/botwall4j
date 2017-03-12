@@ -54,9 +54,9 @@ public class ResponseHardening implements Filter {
 
         if (html != null) {
           Document doc = Jsoup.parseBodyFragment(html);
-          randomize(doc, "input[name]", "name", keyStore);
-          randomize(doc, "input[id]", "id", keyStore);
-          randomize(doc, "form[id]", "id", keyStore);
+          randomize(doc, "input[name]", "name", keyStore, true);
+          randomize(doc, "input[id]", "id", keyStore, false);
+          randomize(doc, "form[id]", "id", keyStore, false);
           response.getWriter().write(doc.html());
         }
         st.setAttribute("keyStore", keyStore);
@@ -84,18 +84,19 @@ public class ResponseHardening implements Filter {
     // do clean up here
   }
 
-  private void randomize(Document doc, String selector, String attribute, Map<String, String> keyStore) {
+  private void randomize(Document doc, String selector, String attribute, Map<String, String> keyStore,
+                         boolean saveInStore) {
     Elements names = doc.select(selector);
     for (Element ele : names) {
       String name = ele.attr(attribute);
-      if(keyStore.containsKey(name)) {
-        String origName = keyStore.get(name);
-        keyStore.remove(name);
-        name = origName;
+      for(String existingRandomParam : keyStore.keySet()) {
+        if(name.equals(keyStore.get(existingRandomParam))) {
+          keyStore.remove(existingRandomParam);
+        }
       }
       String s = UUID.randomUUID().toString();
       ele.attr(attribute, s);
-      keyStore.put(s, name);
+      if(saveInStore) keyStore.put(s, name);
     }
   }
 

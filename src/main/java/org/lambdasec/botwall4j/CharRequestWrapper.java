@@ -53,13 +53,12 @@ public class CharRequestWrapper extends HttpServletRequestWrapper {
         for (String param: paramMap.get(s)) {
           if(keyStore.containsKey(s)) {
             String randomStr = keyStore.get(s);
-            newSb.append(randomStr).append("=").append(param);
+            newSb.append(randomStr);
           }
           else {
-            request.getSession().invalidate();
-            throw new ServletException();
+            newSb.append(s);
           }
-          newSb.append("&");
+          newSb.append("=").append(param).append("&");
         }
       }
       newRequestBody = newSb.toString();
