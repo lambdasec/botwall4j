@@ -1,6 +1,6 @@
 # Botwall4J
 
-This project implements a `responseHardening` servlet filter that acts as a botwall for your Java web applications. The filter transparently rewrites all `input` and `form` elements on your web pages to random values which makes them harder to scrape automatically. You do not need to modify your application.
+This project implements a `ResponseHardening` servlet filter that acts as a botwall for your Java web applications. The filter transparently rewrites all `input` and `form` elements on your web pages to random values which makes them harder to scrape automatically. You do not need to modify your application.
 
 ## Instructions 
 
