@@ -89,10 +89,10 @@ public class ResponseHardening implements Filter {
     Elements names = doc.select(selector);
     for (Element ele : names) {
       String name = ele.attr(attribute);
-      for(String existingRandomParam : keyStore.keySet()) {
-        if(name.equals(keyStore.get(existingRandomParam))) {
-          keyStore.remove(existingRandomParam);
-        }
+      if(keyStore.containsKey(name)) {
+        String origName = keyStore.get(name);
+        keyStore.remove(name);
+        name = origName;
       }
       String s = UUID.randomUUID().toString();
       ele.attr(attribute, s);
