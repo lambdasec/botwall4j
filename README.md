@@ -19,6 +19,8 @@ Make sure that the `botwall4j` jar is available on your classpath. You can then 
 
 For properly functioning of your application this filter should be the first in the filter chain. You can ensure that in the `web.xml` by defining it above all other filters.
 
+### Integrate with Spring Boot
+
 It is also possible to use it without the `web.xml` configuration. In a Spring Boot application you can add the `botwall4j` library to your application and register the filter using the `filterRegistrationBean`:
 
 ```
@@ -33,6 +35,10 @@ public FilterRegistrationBean responseHardeningFilterRegistrationBean() {
 ```
 
 Setting the order to `Integer.MIN_VALUE` will ensure that the filter runs first in the filter chain.
+
+### Integrate with Play Framework
+
+- Coming soon ...
 
 ## Articles
 
