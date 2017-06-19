@@ -36,10 +36,6 @@ public FilterRegistrationBean responseHardeningFilterRegistrationBean() {
 
 Setting the order to `Integer.MIN_VALUE` will ensure that the filter runs first in the filter chain.
 
-### Integrate with Play Framework
-
-- Coming soon ...
-
 ## Articles
 
 - [Protecting Spring Boot Apps with Botwall4J](https://lambdasec.github.io/Protecting-Spring-Boot-Apps-with-Botwall4J/)
