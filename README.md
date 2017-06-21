@@ -19,7 +19,7 @@ Make sure that the `botwall4j` jar is available on your classpath. You can then 
 
 For properly functioning of your application this filter should be the first in the filter chain. You can ensure that in the `web.xml` by defining it above all other filters.
 
-### Integrate with Spring Boot
+### Integrate with Spring Boot (using Java config)
 
 It is also possible to use it without the `web.xml` configuration. In a Spring Boot application you can add the `botwall4j` library to your application and register the filter using the `filterRegistrationBean`:
 
