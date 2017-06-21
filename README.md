@@ -21,7 +21,7 @@ For properly functioning of your application this filter should be the first in 
 
 ### Integrate with Spring Boot (using Java config)
 
-It is also possible to use it without the `web.xml` configuration. In a Spring Boot application you can add the `botwall4j` library to your application and register the filter using the `filterRegistrationBean`:
+It is also possible to use it without the `web.xml` configuration. For example, in a Spring Boot application you can add the `botwall4j` library to your application and register the filter using the `filterRegistrationBean`:
 
 ```
 @Bean
